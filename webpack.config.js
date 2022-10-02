@@ -1,29 +1,31 @@
-const path = require('path')
-const ESlintPlugin = require('eslint-webpack-plugin')
-
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
-  entry: path.resolve(__dirname, './src/index.js'),
-  plugins: [new ESLintPlugin()]
+  entry: './src/index.js',
   module: {
     rules: [
       {
         test: /\.(js)$/,
         exclude: /node_modules/,
-        use: ['babel-loader']
-      }
-    ]
-  },
-  resolve: {
-    extensions: ['*', '.js']
+        use: ['babel-loader'],
+      },
+    ],
   },
   output: {
-    path: path.resolve(__dirname, '/dist'),
-    filename: 'bundle.js'
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js',
+  },
+  resolve: {
+    extensions: ['*', '.js', 'jsx'],
   },
 
-  devServer: {
-    static: path.resolve(__dirname, './dist')
-  }
+  plugins: [new CleanWebpackPlugin(), new ESLintPlugin(), new HtmlWebpackPlugin({
+    templateContent: ({ htmlWebpackPlugin }) => `<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>${htmlWebpackPlugin.options.title}</title></head><body><div id=\"app\"></div></body></html>`,
+    filename: 'index.html',
+  })],
 
-}
+};
